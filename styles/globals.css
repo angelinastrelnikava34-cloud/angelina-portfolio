@@ -1,0 +1,23 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 255 255 255;
+  --fg: 15 15 18;
+}
+/* Dark mode */
+.dark {
+  --bg: 12 12 16;
+  --fg: 240 240 245;
+}
+
+body { background: rgb(var(--bg)); color: rgb(var(--fg)); }
+.container { @apply max-w-6xl mx-auto px-4; }
+.card { @apply rounded-2xl border shadow-sm bg-white/60 dark:bg-white/5 backdrop-blur; }
+.btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium border; }
+.btn-primary { @apply bg-black text-white dark:bg-white dark:text-black; }
+.btn-outline { @apply bg-transparent; }
+.badge { @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs; }
+img { @apply select-none; }
