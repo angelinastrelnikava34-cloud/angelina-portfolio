@@ -1,0 +1,241 @@
+[
+  {
+    "src": "/gallery/metro-couple.jpg",
+    "title": "Between Trains",
+    "alt": "Couple on a metro platform as a train rushes by",
+    "location": "Boston, MA",
+    "category": [
+      "street",
+      "love-story"
+    ],
+    "tags": [
+      "motion",
+      "city",
+      "cinematic"
+    ]
+  },
+  {
+    "src": "/gallery/sailing-mohawk-color.jpg",
+    "title": "Salt & Sun",
+    "alt": "Sailor with mohawk working the lines at sunset",
+    "location": "Boston Harbor, MA",
+    "category": [
+      "events",
+      "portrait",
+      "documentary"
+    ],
+    "tags": [
+      "golden-hour",
+      "sea",
+      "character"
+    ]
+  },
+  {
+    "src": "/gallery/wedding-forehead-kiss-bw.jpg",
+    "title": "Quiet Light",
+    "alt": "Groom kisses bride on the forehead",
+    "location": "Boston Public Garden, MA",
+    "category": [
+      "love-story",
+      "wedding"
+    ],
+    "tags": [
+      "bw",
+      "intimate",
+      "classic"
+    ]
+  },
+  {
+    "src": "/gallery/acadia-lake-log-girls.jpg",
+    "title": "North Woods Calm",
+    "alt": "Two friends on a log looking toward the hills",
+    "location": "Acadia National Park, ME",
+    "category": [
+      "travel",
+      "lifestyle"
+    ],
+    "tags": [
+      "landscape",
+      "quiet",
+      "nature"
+    ]
+  },
+  {
+    "src": "/gallery/seagull-lighthouse-gloucester.jpg",
+    "title": "Gull & Light",
+    "alt": "Seagull in flight and lighthouse in Gloucester",
+    "location": "Gloucester, MA",
+    "category": [
+      "travel"
+    ],
+    "tags": [
+      "coast",
+      "lighthouse",
+      "new-england"
+    ]
+  },
+  {
+    "src": "/gallery/boston-steam-crosswalk.jpg",
+    "title": "Steam Corner",
+    "alt": "Man walks through city steam at an intersection",
+    "location": "Boston, MA",
+    "category": [
+      "street"
+    ],
+    "tags": [
+      "urban",
+      "steam",
+      "graphic"
+    ]
+  },
+  {
+    "src": "/gallery/nyc-times-square-boy.jpg",
+    "title": "Neon Rain",
+    "alt": "Teen walking in Times Square at night",
+    "location": "New York, NY",
+    "category": [
+      "street",
+      "travel"
+    ],
+    "tags": [
+      "night",
+      "neon",
+      "rain"
+    ]
+  },
+  {
+    "src": "/gallery/nyc-batman-rain.jpg",
+    "title": "Vigil in the Rain",
+    "alt": "Costumed man stands under rain at Times Square",
+    "location": "New York, NY",
+    "category": [
+      "street",
+      "events"
+    ],
+    "tags": [
+      "portrait",
+      "rain",
+      "times-square"
+    ]
+  },
+  {
+    "src": "/gallery/nyc-umbrella-couple.jpg",
+    "title": "Under One Umbrella",
+    "alt": "Couple under an umbrella glowing with city lights",
+    "location": "New York, NY",
+    "category": [
+      "street",
+      "love-story"
+    ],
+    "tags": [
+      "rain",
+      "tender",
+      "color"
+    ]
+  },
+  {
+    "src": "/gallery/nyc-bikes-rain-bw.jpg",
+    "title": "Two Wheels in Weather",
+    "alt": "Cyclists moving through rainy city streets",
+    "location": "New York, NY",
+    "category": [
+      "street",
+      "documentary"
+    ],
+    "tags": [
+      "bw",
+      "motion",
+      "rain"
+    ]
+  },
+  {
+    "src": "/gallery/wedding-door-dance-1-bw.jpg",
+    "title": "Spin",
+    "alt": "Bride twirls in front of a townhouse doorway",
+    "location": "Boston, MA",
+    "category": [
+      "wedding",
+      "love-story"
+    ],
+    "tags": [
+      "bw",
+      "movement",
+      "joy"
+    ]
+  },
+  {
+    "src": "/gallery/wedding-tree-smile-bw.jpg",
+    "title": "Willow Laugh",
+    "alt": "Bride and groom smiling under a tree",
+    "location": "Boston, MA",
+    "category": [
+      "wedding",
+      "love-story"
+    ],
+    "tags": [
+      "bw",
+      "natural",
+      "happy"
+    ]
+  },
+  {
+    "src": "/gallery/boy-on-beach-red-jacket.jpg",
+    "title": "Little Footprints",
+    "alt": "Boy walking on the shoreline",
+    "location": "Acadia National Park, ME",
+    "category": [
+      "lifestyle",
+      "family"
+    ],
+    "tags": [
+      "beach",
+      "candid",
+      "kids"
+    ]
+  },
+  {
+    "src": "/gallery/girls-with-dog-beach.jpg",
+    "title": "Beach Talk",
+    "alt": "Two girls sit with their dog on the sand",
+    "location": "Acadia National Park, ME",
+    "category": [
+      "lifestyle",
+      "documentary"
+    ],
+    "tags": [
+      "friendship",
+      "dog",
+      "beach"
+    ]
+  },
+  {
+    "src": "/gallery/girl-with-dog-ocean.jpg",
+    "title": "Sea Companion",
+    "alt": "Girl stands with her dog by the ocean",
+    "location": "Acadia National Park, ME",
+    "category": [
+      "lifestyle",
+      "portrait"
+    ],
+    "tags": [
+      "pet",
+      "ocean",
+      "calm"
+    ]
+  },
+  {
+    "src": "/gallery/sailing-mohawk-bw.jpg",
+    "title": "Lines & Wind",
+    "alt": "Crew member behind a sail, black and white",
+    "location": "Boston Harbor, MA",
+    "category": [
+      "events",
+      "documentary"
+    ],
+    "tags": [
+      "bw",
+      "sailing",
+      "texture"
+    ]
+  }
+]
