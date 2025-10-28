@@ -1,12 +1,35 @@
 
 @tailwind base; @tailwind components; @tailwind utilities;
-:root{--bg:255 255 255;--fg:15 15 18}
-.dark{--bg:12 12 16;--fg:240 240 245}
-body{background:rgb(var(--bg));color:rgb(var(--fg))}
+
+/* Color tokens */
+:root{
+  --bg: 246 220 224;        /* #F6DCE0 */
+  --fg: 27 27 27;           /* #1B1B1B */
+  --accent: 126 36 58;      /* #7E243A wine */
+  --accent-contrast: 255 255 255;
+  --surface: 255 255 255;
+  --surface-muted: 255 255 255 / 0.6;
+  --border: 126 36 58 / 0.15;
+}
+.dark{
+  --bg: 43 14 19;           /* #2B0E13 */
+  --fg: 251 239 242;        /* #FBEFF2 */
+  --accent: 230 167 180;    /* #E6A7B4 */
+  --accent-contrast: 43 14 19;
+  --surface: 59 20 27;
+  --surface-muted: 255 255 255 / 0.05;
+  --border: 230 167 180 / 0.20;
+}
+html, body { height: 100%; }
+body{ background: rgb(var(--bg)); color: rgb(var(--fg)); }
 .container{@apply max-w-6xl mx-auto px-4}
-.card{@apply rounded-2xl border shadow-sm bg-white/60 dark:bg-white/5 backdrop-blur}
-.btn{@apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium border}
-.btn-primary{@apply bg-black text-white dark:bg-white dark:text-black}
-.btn-outline{@apply bg-transparent}
-.badge{@apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs}
+.card{ background: color-mix(in oklab, rgb(var(--surface)) 80%, transparent); @apply rounded-2xl border shadow-sm backdrop-blur; border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent); }
+.btn{@apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium border transition; border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent); }
+.btn-primary{ background: rgb(var(--accent)); color: rgb(var(--accent-contrast)); border-color: transparent; }
+.btn-primary:hover{ filter: brightness(0.95); }
+.btn-outline{ background: transparent; color: rgb(var(--fg)); }
+.btn-outline:hover{ background: color-mix(in oklab, rgb(var(--surface)) 40%, transparent); }
+.badge{ @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs; border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent); }
+a:hover{ opacity: .9 }
 img{@apply select-none}
+hr{border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent)}

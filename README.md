@@ -1,9 +1,9 @@
 
-# Angelina Strelnikava — Portfolio (User content update)
-- Email set to angelinastrelnikava34@gmail.com
-- Services updated: Reportage / Portrait / Creative
-- About story: Belarus → Massachusetts (Boston), college Media Communications
-- Testimonials include RU review by Татьяна
-- Phone removed
-- RU/EN texts via `lib/i18n.js`
-- Editable gallery/services/testimonials in `lib/content.js`
+# Angelina Strelnikava — Portfolio (Colors + Admin)
+- New color scheme: Pantone 176 (light) + deep wine (dark)
+- Simple visual editor at `/admin` (export `content.js` to upload into GitHub)
+- Optional Formspree endpoint (replace `https://formspree.io/f/your-id` in `pages/index.jsx`)
+
+Quick edit:
+- Texts: `lib/i18n.js`
+- Content lists & email: `lib/content.js`

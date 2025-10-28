@@ -1,4 +1,3 @@
-
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { Camera, CalendarCheck2, Instagram, Mail, MapPin, Sparkles, ArrowRight, Check, Star, Moon, Sun, Globe } from 'lucide-react'
@@ -21,7 +20,7 @@ export default function Home({ toggleDark, dark }){
 
   return (
     <div className='min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black'>
-      <header className='sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-black/30 border-b'>
+      <header className='sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/50 dark:supports-[backdrop-filter]:bg-black/20 border-b'>
         <div className='container h-16 md:h-20 flex items-center justify-between'>
           <a href='#home' className='flex items-center gap-2 group'>
             <Camera className='h-5 w-5 md:h-6 md:w-6'/>
@@ -87,7 +86,7 @@ export default function Home({ toggleDark, dark }){
       <Section id='services' title={t.services.title} subtitle={t.services.sub}>
         <div className='grid md:grid-cols-3 gap-6'>
           {services.map((p,idx)=> (
-            <div key={p.name} className={clsx('card p-6 relative', idx===1 && 'ring-2 ring-black dark:ring-white')}>
+            <div key={p.name} className={'card p-6 relative ' + (idx===1 ? 'ring-2' : '')}>
               {idx===1 && (
                 <span className='absolute right-3 top-3 badge text-[10px] uppercase tracking-wide'>
                   <Star className='h-3 w-3'/> Popular
@@ -136,21 +135,21 @@ export default function Home({ toggleDark, dark }){
       <Section id='contact' title={t.contact.title} subtitle={t.contact.sub}>
         <div className='grid md:grid-cols-2 gap-8'>
           <div className='card p-6'>
-            <form onSubmit={(e)=>{ e.preventDefault(); const name=e.target.name.value; const email=e.target.email.value; const message=e.target.message.value; window.location.href=`mailto:${contact.email}?subject=Photo Inquiry from ${name}&body=${encodeURIComponent(message + "\n\nReply to: " + email)}` }} className='space-y-4'>
-              <div>
-                <label className='text-sm'>{t.contact.name}</label>
-                <input name='name' required placeholder='Your name' className='mt-1 w-full rounded-xl border px-3 py-2 bg-transparent'/>
-              </div>
-              <div>
-                <label className='text-sm'>{t.contact.email}</label>
-                <input type='email' name='email' required placeholder='you@email.com' className='mt-1 w-full rounded-xl border px-3 py-2 bg-transparent'/>
-              </div>
-              <div>
-                <label className='text-sm'>{t.contact.message}</label>
-                <textarea name='message' rows={5} required placeholder='What are we shooting? Dates, location, vibe…' className='mt-1 w-full rounded-xl border px-3 py-2 bg-transparent'></textarea>
-              </div>
-              <button type='submit' className='btn btn-primary w-full gap-2'>{t.btn.send} <Mail className='h-4 w-4'/></button>
-              <p className='text-xs opacity-70'>{t.contact.notice}</p>
+            <form method='POST' action='' data-endpoint='https://formspree.io/f/your-id' onSubmit={(e)=>{
+              const endpoint = e.currentTarget.getAttribute('data-endpoint')
+              if(!endpoint || endpoint.includes('your-id')){
+                e.preventDefault();
+                const name=e.target.name.value; const email=e.target.email.value; const message=e.target.message.value;
+                window.location.href=`mailto:${contact.email}?subject=Photo Inquiry from ${name}&body=${encodeURIComponent(message + "\n\nReply to: " + email)}`
+              } else {
+                e.currentTarget.setAttribute('action', endpoint)
+              }
+            }} className='space-y-4'>
+              <div><label className='text-sm'>Name / Имя</label><input name='name' required className='mt-1 w-full rounded-xl border px-3 py-2 bg-transparent'/></div>
+              <div><label className='text-sm'>Email / Почта</label><input type='email' name='email' required className='mt-1 w-full rounded-xl border px-3 py-2 bg-transparent'/></div>
+              <div><label className='text-sm'>Message / Сообщение</label><textarea name='message' rows={5} required className='mt-1 w-full rounded-xl border px-3 py-2 bg-transparent'></textarea></div>
+              <button type='submit' className='btn btn-primary w-full gap-2'>Send inquiry <Mail className='h-4 w-4'/></button>
+              <p className='text-xs opacity-70'>By sending, you agree to be contacted about your inquiry.</p>
             </form>
           </div>
           <div className='space-y-6'>
@@ -158,9 +157,7 @@ export default function Home({ toggleDark, dark }){
               <div className='flex items-center gap-3'><Mail className='h-5 w-5'/><a className='underline underline-offset-4' href={`mailto:${contact.email}`}>{contact.email}</a></div>
             </div>
             <a href={socials.instagram} target='_blank' className='badge w-max'><Instagram className='h-5 w-5'/> Follow on Instagram</a>
-            <div className='card p-4 text-sm opacity-80'>
-              For weddings and events, please include venue, timeline, and approximate guest count. I’ll tailor a package to fit your story.
-            </div>
+            <div className='card p-4 text-sm opacity-80'>For weddings and events, please include venue, timeline, and approximate guest count. I’ll tailor a package to fit your story.</div>
           </div>
         </div>
       </Section>
