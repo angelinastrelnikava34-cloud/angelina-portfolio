@@ -33,3 +33,20 @@ body{ background: rgb(var(--bg)); color: rgb(var(--fg)); }
 a:hover{ opacity: .9 }
 img{@apply select-none}
 hr{border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent)}
+/* --- Ken Burns / Pan & Zoom --- */
+@keyframes kb-zoom-pan {
+  0%   { transform: scale(1.05) translate(0%, 0%); }
+  50%  { transform: scale(1.12) translate(-2%, -2%); }
+  100% { transform: scale(1.18) translate(2%, 2%); }
+}
+
+/* универсальный класс для картинок в карточках */
+.kb-animate {
+  animation: kb-zoom-pan 14s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* на hover останавливаем (удобно рассмотреть кадр) */
+.kb-paused:hover img {
+  animation-play-state: paused;
+}
