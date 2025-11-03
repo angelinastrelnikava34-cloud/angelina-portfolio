@@ -1,4 +1,4 @@
-
+import '../styles/gallery.css';
 import '@/styles/globals.css'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
