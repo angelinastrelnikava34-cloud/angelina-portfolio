@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Section from '@/components/Section'
 import { useMemo, useState } from 'react'
 import { Camera, CalendarCheck2, Instagram, Mail, MapPin, Sparkles, ArrowRight, Check, Star, Moon, Sun, Globe } from 'lucide-react'
 import Section from '@/components/Section'
@@ -43,7 +44,30 @@ export default function Home({ toggleDark, dark }){
           </div>
         </div>
       </header>
-
+<Section id="work" title={(dict?.work?.title) || 'Featured Work'} subtitle={dict?.work?.subtitle}>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {gallery.map((item, index) => (
+      <div
+        key={item.src}
+        className="relative overflow-hidden rounded-2xl kb-paused"
+        style={{ aspectRatio: item.ratio || '3 / 4' }}  // варианты: '2 / 3', '4 / 3', '1 / 1'
+      >
+        <Image
+          src={item.src}
+          alt={item.alt || ''}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          className="object-cover kb-animate"
+          style={{
+            animationDelay: `${(index % 6) * 0.8}s`,
+            objectPosition: item.focal || 'center'
+          }}
+          priority={index < 2}
+        />
+      </div>
+    ))}
+  </div>
+</Section>
       <section id='home'>
         <div className='container grid md:grid-cols-2 gap-10 py-16 md:py-28 items-center'>
           <div>
