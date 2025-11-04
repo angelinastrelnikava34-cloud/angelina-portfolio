@@ -176,10 +176,10 @@ export default function Home({ toggleDark, dark }) {
         />
       </div>
     ))}
-  </div>
-</Section>
+ 
+  </Section>
 
-   {/* ABOUT */}
+{/* ABOUT */}
 <Section id="about" title="About me" subtitle="">
   <div className="prose prose-invert max-w-2xl text-sm sm:text-base">
     {CONTENT.about?.paragraphs?.map((p, i) => (
@@ -200,9 +200,31 @@ export default function Home({ toggleDark, dark }) {
       rel="noreferrer"
       className="btn btn-outline"
     >
-      Instagram @strelnikava_ph
+      Instagram
     </a>
   </div>
+</Section>
+
+{/* PACKAGES */}
+<Section id="packages" title="Packages" subtitle="">
+  <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {Array.isArray(CONTENT.packages) && CONTENT.packages.map((s, i) => (
+      <li key={i} className="card">
+        <h3 className="text-base font-semibold">{s.title}</h3>
+        {s.desc && <p className="mt-1 opacity-80">{s.desc}</p>}
+
+        {Array.isArray(s.features) && s.features.length > 0 && (
+          <ul className="mt-4 space-y-2 text-sm opacity-80">
+            {s.features.map((f, k) => <li key={k}>• {f}</li>)}
+          </ul>
+        )}
+
+        {s.price && (
+          <div className="mt-4 text-right font-semibold">{s.price}</div>
+        )}
+      </li>
+    ))}
+  </ul>
 </Section>
 
 {/* PACKAGES / SERVICES */}
