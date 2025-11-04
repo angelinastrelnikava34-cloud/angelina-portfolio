@@ -1,9 +1,9 @@
 // pages/index.jsx
 
 import { useMemo, useState } from 'react';
-import Section from '@/components/Section';
-import dict from '@/lib/i18n';
-import { CONTENT } from '@/lib/content';
+import Section from '../components/Section';
+import dict from '../lib/i18n';
+import { CONTENT } from '../lib/content';
 import clsx from 'clsx';
 
 const { brand, contact, socials, gallery = [], services = [], testimonials = [] } = CONTENT;
