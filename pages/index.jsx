@@ -1,224 +1,330 @@
-import { useMemo, useState } from 'react';
-import Section from '@/components/Section';
-import dict from '@/lib/i18n';
-import CONTENT from '@/lib/content';
-import clsx from 'clsx';
+// pages/index.jsx
+import { useEffect, useMemo, useState } from "react";
 
-function SafeImg({ src, alt = '', className = '', style, eager = false, focal = 'center' }) {
-  const onError = (e) => e?.currentTarget && (e.currentTarget.style.display = 'none');
-  if (!src) return null;
+/* ====== настройки темы и языка (без внешних файлов) ====== */
+const LIGHT_BG = "#F5DCE1"; // светлый «pantone light wine»
+const DARK_BG  = "#0E0E0F";
+const ACCENT   = "#B04360"; // бордовый акцент для кнопок/иконок
+
+const TEXT = {
+  en: {
+    heroTitle: "Angelina Strelnikava",
+    heroSub: "Travel, Portrait & Lifestyle Photography",
+    seeWork: "See my work",
+    packages: "Packages",
+    featured: "Featured Work",
+    about: "About me",
+    aboutSub: "Travel, Portrait & Lifestyle Photography",
+    aboutP: [
+      "Hi! I'm Angelina, a travel, portrait & lifestyle photographer based in Massachusetts, USA.",
+      "I love cinematic, natural, story-driven images — from quiet everyday moments to events and weddings.",
+      "I speak English and Russian, and I’m happy to plan a session around your story and locations you love."
+    ],
+    bookNow: "Book now",
+    instagram: "Instagram",
+    contact: "Contact",
+    from: "from",
+    pricePortrait: "Portrait / Lifestyle",
+    priceCouple: "Couple / Love Story",
+    priceEvent: "Event / Small Wedding",
+    priceCustom: "custom",
+    cardFeatures: [
+      ["60–90 min shooting","15–25 edited photos","Online gallery"],
+      ["90–120 min shooting","25–40 edited photos","Location & styling help"],
+      ["Story-driven coverage","Edited selection","Flexible timing"]
+    ],
+    bookThis: "Book this",
+    email: "Email"
+  },
+  ru: {
+    heroTitle: "Ангелина Стрельникова",
+    heroSub: "Путешествия, портреты и лайфстайл-съёмка",
+    seeWork: "Портфолио",
+    packages: "Пакеты",
+    featured: "Лучшие работы",
+    about: "Обо мне",
+    aboutSub: "Путешествия, портреты и лайфстайл-съёмка",
+    aboutP: [
+      "Привет! Я Ангелина — фотограф из Массачусетса (США): путешествия, портреты и лайфстайл.",
+      "Люблю кинематографичные, естественные, «историйные» кадры — от тихих моментов до событий и свадеб.",
+      "Говорю на английском и русском, подберу локации и план сессии под вашу историю."
+    ],
+    bookNow: "Записаться",
+    instagram: "Instagram",
+    contact: "Контакты",
+    from: "от",
+    pricePortrait: "Портрет / Лайфстайл",
+    priceCouple: "Пара / Love Story",
+    priceEvent: "Событие / Небольшая свадьба",
+    priceCustom: "индивидуально",
+    cardFeatures: [
+      ["Съёмка 60–90 мин","15–25 обработанных фото","Онлайн-галерея"],
+      ["Съёмка 90–120 мин","25–40 обработанных фото","Помощь с локацией и образом"],
+      ["Историйная съёмка","Отобранные и обработанные кадры","Гибкое время"]
+    ],
+    bookThis: "Выбрать",
+    email: "Почта"
+  }
+};
+
+/* ====== галерея (только локальные файлы из /public/gallery) ======
+   Если какого-то файла нет — карточка сама скрывается (onError).  */
+const GALLERY = [
+  { src: "/gallery/01-boston-train.jpg",  alt: "Boston T platform, motion blur" },
+  { src: "/gallery/02-boston-sailor-mohawk.jpg", alt: "Sailor with mohawk at the helm" },
+  { src: "/gallery/03-umbrella-couple.jpg", alt: "Couple with umbrella at night" },
+  { src: "/gallery/04-sail-bw.jpg", alt: "Sailing in black and white" },
+  { src: "/gallery/05-times-square.jpg", alt: "Times Square street scene" },
+  { src: "/gallery/IMG_8812.jpeg", alt: "Small wedding dance outside 11" }, // новое фото
+];
+
+/* ====== утилиты ====== */
+const Button = ({ children, href, variant="primary" }) => {
+  const cls = variant === "outline"
+    ? "border border-white/20 hover:border-white/40"
+    : "bg-[--accent] hover:brightness-110";
   return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      style={{ objectPosition: focal, ...(style || {}) }}
-      loading={eager ? 'eager' : 'lazy'}
-      decoding="async"
-      onError={onError}
-    />
+    <a
+      href={href}
+      className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium transition ${cls}`}
+      style={{ ["--accent"]: ACCENT }}
+    >
+      {children}
+    </a>
   );
-}
+};
 
-export default function Home({ toggleDark = () => {}, dark = false }) {
-  const [lang, setLang] = useState('en');
-  const t = dict?.[lang] || {};
+export default function Home() {
+  const [lang, setLang] = useState("en");
+  const t = useMemo(() => TEXT[lang], [lang]);
+  const [theme, setTheme] = useState("dark");
 
-  const brand = CONTENT?.brand || { firstname: 'Angelina', lastName: 'Strelnikava', tagline: 'Travel, Portrait & Lifestyle Photography' };
-  const contact = CONTENT?.contact || { email: 'angelinastrelnikava34@gmail.com' };
-  const socials = CONTENT?.socials || { instagram: 'https://www.instagram.com/strelnikava_ph' };
-  const gallery = Array.isArray(CONTENT?.gallery) ? CONTENT.gallery : [];
-  const services = Array.isArray(CONTENT?.services) ? CONTENT.services : [];
-  const aboutParagraphs = Array.isArray(CONTENT?.about?.paragraphs) ? CONTENT.about.paragraphs : [];
+  // применяем тему к <html>
+  useEffect(() => {
+    const html = document.documentElement;
+    if (theme === "dark") {
+      html.classList.add("dark");
+      html.style.background = DARK_BG;
+    } else {
+      html.classList.remove("dark");
+      html.style.background = LIGHT_BG;
+    }
+  }, [theme]);
 
-  const labels = {
-    work: t?.menu?.work || 'Work',
-    services: t?.menu?.services || 'Services',
-    about: t?.menu?.about || 'About',
-    contact: t?.menu?.contact || 'Contact',
-    seeWork: t?.btn?.seeWork || 'See my work',
-    packages: t?.btn?.packages || 'Packages',
-    book: t?.btn?.book || 'Book now',
-    bookThis: t?.btn?.book || 'Book this',
-    aboutTitle: t?.about?.title || 'About me',
-    aboutSubtitle: t?.about?.subtitle || 'Travel, Portrait & Lifestyle Photography',
-    packagesTitle: t?.packages?.title || 'Packages',
-    contactTitle: t?.contact?.title || 'Contact',
-    featuredTitle: t?.work?.title || 'Featured Work',
+  // плавная «дыхалка» для картинок (keyframes — инлайн)
+  useEffect(() => {
+    const id = "kb-zoom-pan";
+    if (!document.getElementById(id)) {
+      const style = document.createElement("style");
+      style.id = id;
+      style.innerHTML = `
+        @keyframes kb-zoom-pan { 
+          0% { transform: scale(1) translate(0,0) } 
+          50% { transform: scale(1.02) translate(0, -1%) } 
+          100% { transform: scale(1) translate(0,0) } 
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+
+  // email/insta
+  const contact = {
+    email: "angelinastrelnikava34@gmail.com",
+    instagram: "https://www.instagram.com/strelnikava_ph"
   };
 
-  const menu = useMemo(
-    () => [
-      { href: '#work', label: labels.work },
-      { href: '#services', label: labels.services },
-      { href: '#about', label: labels.about },
-      { href: '#contact', label: labels.contact },
-    ],
-    [lang]
-  );
-
   return (
-    <div className={clsx('min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black')}>
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/50 dark:supports-[backdrop-filter]:bg-neutral-900/50">
-        <div className="container mx-auto px-6 py-3 flex items-center justify-between">
-          <a href="#home" className="font-semibold tracking-tight text-sm md:text-base">
-            {brand.firstname} <span className="opacity-70">{brand.lastName}</span>
-          </a>
-          <nav className="hidden md:flex items-center gap-6">
-            {menu.map((m) => (
-              <a key={m.href} href={m.href} className="opacity-80 hover:opacity-100 transition">
-                {m.label}
-              </a>
-            ))}
+    <div className="min-h-screen text-white selection:bg-white/10">
+      {/* TOP BAR */}
+      <header className="sticky top-0 z-40 backdrop-blur bg-black/30">
+        <div className="container mx-auto px-6 h-14 flex items-center justify-between">
+          <span className="font-semibold">Strelnikava</span>
+          <nav className="hidden md:flex items-center gap-6 text-sm">
+            <a href="#work" className="hover:opacity-80">Work</a>
+            <a href="#services" className="hover:opacity-80">Services</a>
+            <a href="#about" className="hover:opacity-80">About</a>
+            <a href="#contact" className="hover:opacity-80">Contact</a>
+            <div className="h-5 w-px bg-white/15" />
             <button
-              className="px-3 py-1 rounded-full border text-sm opacity-80 hover:opacity-100"
-              onClick={() => setLang((p) => (p === 'en' ? 'ru' : 'en'))}
+              onClick={() => setLang(l => l === "en" ? "ru" : "en")}
+              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/15"
+              aria-label="Toggle language"
+              title="Toggle language"
             >
-              {lang.toUpperCase()}
+              {lang === "en" ? "EN" : "RU"}
             </button>
             <button
-              className="px-3 py-1 rounded-full border text-sm opacity-80 hover:opacity-100"
-              onClick={toggleDark}
+              onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
+              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/15"
+              aria-label="Toggle theme"
+              title="Toggle theme"
             >
-              {dark ? 'Light' : 'Dark'}
+              {theme === "dark" ? "Dark" : "Light"}
             </button>
-            <a
-              href={`mailto:${contact.email}?subject=Photography%20booking`}
-              className="btn btn-primary"
-            >
-              {labels.book}
-            </a>
+            <Button href="#contact">{t.bookNow}</Button>
           </nav>
         </div>
       </header>
 
-      {/* HERO */}
-      <section id="home" className="container mx-auto px-6 py-12 md:py-16">
-        <div className="grid md:grid-cols-[1fr,560px] gap-10 items-start">
+      {/* HERO (без миниатюр, центрированный) */}
+      <section className="container mx-auto px-6 pt-16 pb-8">
+        <div className="grid md:grid-cols-2 items-center gap-10">
           <div>
-            <h1 className="text-3xl md:text-5xl font-semibold tracking-tight">
-              {brand.firstname} {brand.lastName}
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+              {t.heroTitle}
             </h1>
-            <p className="mt-3 text-sm md:text-base opacity-80">{brand.tagline}</p>
-            <div className="mt-6 flex gap-3">
-              <a href="#work" className="btn btn-primary">{labels.seeWork}</a>
-              <a href="#packages" className="btn btn-outline">{labels.packages}</a>
+            <p className="mt-3 text-white/80">{t.heroSub}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button href="#work">{t.seeWork}</Button>
+              <Button href="#services" variant="outline">{t.packages}</Button>
             </div>
           </div>
+          {/* правую колонку оставляем пустой — визуально дышит */}
+          <div className="hidden md:block" />
+        </div>
+      </section>
 
-          {/* 5 мини-превью */}
-          <div className="grid grid-cols-5 gap-4">
-            {gallery.slice(0, 5).map((item, idx) => (
-              <div key={item?.src || idx} className="relative overflow-hidden rounded-2xl">
-                <SafeImg
-                  src={item?.src}
-                  alt={item?.alt}
-                  focal={item?.focal}
-                  eager={idx < 2}
-                  className="h-44 w-full object-cover rounded-2xl kb-animate"
-                  style={{ animationDelay: `${(idx % 6) * 0.8}s` }}
-                />
-              </div>
-            ))}
+      {/* FEATURED WORK — без пустого пространства */}
+      <section id="work" className="container mx-auto px-6 pt-6">
+        <h2 className="text-2xl font-bold mb-4">{t.featured}</h2>
+
+        {/* плотная «masonry» сетка без дырок */}
+        <div
+          className="
+            grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+            gap-6 auto-rows-[1px] [grid-auto-flow:dense]
+          "
+        >
+          {GALLERY.filter(x => !!x.src).map((item, i) => (
+            <figure
+              key={item.src + i}
+              className="
+                group relative overflow-hidden rounded-2xl bg-white/5
+                shadow-[0_1px_0_rgba(255,255,255,.04)_inset]
+              "
+            >
+              <img
+                src={item.src}
+                alt={item.alt || ""}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => { e.currentTarget.parentElement.style.display = "none"; }}
+                className="
+                  w-full h-full object-cover
+                  transition-transform duration-[800ms]
+                  group-hover:scale-[1.06]
+                  [animation:kb-zoom-pan_12s_ease-in-out_infinite]
+                "
+                style={{ transformOrigin: "center" }}
+              />
+              <figcaption className="absolute bottom-2 left-2 text-xs bg-black/40 px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">
+                {item.alt}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      {/* ABOUT */}
+      <section id="about" className="container mx-auto px-6 pt-16">
+        <h2 className="text-2xl font-bold">{t.about}</h2>
+        <p className="text-white/70 text-sm mt-1">{t.aboutSub}</p>
+        <div className="prose prose-invert max-w-2xl text-sm mt-4">
+          {t.aboutP.map((p, i) => <p key={i} className="opacity-90">{p}</p>)}
+        </div>
+        <div className="mt-6 flex gap-3">
+          <Button href={`mailto:${contact.email}`}>{t.bookNow}</Button>
+          <Button href={contact.instagram} variant="outline">{t.instagram}</Button>
+        </div>
+      </section>
+
+      {/* PACKAGES */}
+      <section id="services" className="container mx-auto px-6 pt-16">
+        <h2 className="text-2xl font-bold">Packages</h2>
+
+        <div className="grid md:grid-cols-3 gap-6 mt-6">
+          {/* 1 */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">{t.pricePortrait}</h3>
+              <span className="text-xs text-white/60">{t.from} $190</span>
+            </div>
+            <ul className="mt-4 space-y-2 text-sm">
+              {t.cardFeatures[0].map((s, i) => <li key={i} className="list-disc list-inside">{s}</li>)}
+            </ul>
+            <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
+              {t.bookThis}
+            </Button>
+          </div>
+          {/* 2 */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">{t.priceCouple}</h3>
+              <span className="text-xs text-white/60">{t.from} $260</span>
+            </div>
+            <ul className="mt-4 space-y-2 text-sm">
+              {t.cardFeatures[1].map((s, i) => <li key={i} className="list-disc list-inside">{s}</li>)}
+            </ul>
+            <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
+              {t.bookThis}
+            </Button>
+          </div>
+          {/* 3 */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">{t.priceEvent}</h3>
+              <span className="text-xs text-white/60">{t.priceCustom}</span>
+            </div>
+            <ul className="mt-4 space-y-2 text-sm">
+              {t.cardFeatures[2].map((s, i) => <li key={i} className="list-disc list-inside">{s}</li>)}
+            </ul>
+            <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
+              {t.bookThis}
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* WORK — без пустоты сверху */}
-<Section id="work" title={labels.featuredTitle} spacing="tight">
-  <div className="mt-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    {gallery.map((item, index) => (
-      <div key={item?.src || index} className="relative overflow-hidden rounded-2xl">
-        <SafeImg
-          src={item?.src}
-          alt={item?.alt}
-          focal={item?.focal}
-          eager={index < 3}
-          className="w-full h-full object-cover rounded-2xl kb-animate"
-          style={{ animationDelay: `${(index % 6) * 0.8}s` }}
-        />
-      </div>
-    ))}
-  </div>
-</Section>
-
-      {/* ABOUT */}
-      <Section id="about" title={labels.aboutTitle} subtitle={labels.aboutSubtitle}>
-        <div className="prose prose-invert max-w-2xl text-sm sm:text-base">
-          {aboutParagraphs.map((p, i) => (
-            <p key={i} className="opacity-90">{p}</p>
-          ))}
-        </div>
-        <div className="mt-6 flex gap-3">
-          <a
-            href={`mailto:${contact.email}?subject=Photography%20booking`}
-            className="btn btn-primary"
-          >
-            {labels.book}
-          </a>
-          <a
-            className="btn btn-outline inline-flex items-center gap-2"
-            href={socials.instagram}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1..."/></svg>
-            Instagram
-          </a>
-        </div>
-      </Section>
-
-      {/* PACKAGES */}
-      <Section id="packages" title={labels.packagesTitle}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((s, i) => (
-            <div key={i} className="card rounded-2xl p-5 group hover:scale-[1.01] transition">
-              <div className="flex items-baseline justify-between">
-                <h3 className="font-medium text-lg">{s?.title || 'Package'}</h3>
-                <span className="text-sm opacity-70">{s?.price || ''}</span>
-              </div>
-              {Array.isArray(s?.features) && s.features.length > 0 && (
-                <ul className="mt-4 space-y-2 text-sm opacity-90">
-                  {s.features.map((f, k) => (
-                    <li key={k} className="flex items-start gap-2">
-                      <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-current opacity-60"></span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div className="mt-5">
-                <a
-                  href={`mailto:${contact.email}?subject=${encodeURIComponent(`Package inquiry: ${s?.title || ''}`)}`}
-                  className="btn btn-primary w-full"
-                >
-                  {labels.bookThis}
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
       {/* CONTACT */}
-      <Section id="contact" title={labels.contactTitle}>
-        <div className="grid gap-4 text-sm">
-          <a href={`mailto:${contact.email}`} className="inline-flex items-center gap-2 opacity-90 hover:opacity-100">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M2 6.5A2.5..."/></svg>
+      <section id="contact" className="container mx-auto px-6 pt-16 pb-20">
+        <h2 className="text-2xl font-bold">{t.contact}</h2>
+        <div className="mt-4 flex flex-col gap-3 text-sm">
+          {/* email */}
+          <a
+            href={`mailto:${contact.email}`}
+            className="inline-flex items-center gap-2 opacity-90 hover:opacity-100"
+          >
+            {/* mail icon */}
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" style={{ color: ACCENT }}>
+              <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z"/>
+            </svg>
             <span>{contact.email}</span>
           </a>
-          <a href={socials.instagram} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 opacity-90 hover:opacity-100">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.2c3.2..."/></svg>
+
+          {/* instagram */}
+          <a
+            href={contact.instagram}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 opacity-90 hover:opacity-100"
+          >
+            {/* insta icon */}
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" style={{ color: ACCENT }}>
+              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm6.5-.75a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Z"/>
+            </svg>
             <span>@strelnikava_ph</span>
           </a>
         </div>
-      </Section>
+      </section>
 
       {/* FOOTER */}
-      <footer className="container mx-auto px-6 py-10 text-center opacity-60 text-sm">
-        © {new Date().getFullYear()} {brand.firstname} {brand.lastName}
+      <footer className="text-center text-xs text-white/60 pb-10">
+        © {new Date().getFullYear()} Strelnikava
       </footer>
     </div>
   );
 }
+
+/* ====== простые util классы Tailwind (если их нет — Tailwind всё равно применит) ======
+   Не требуются внешние CSS-файлы: мы используем готовые utility-классы. */
