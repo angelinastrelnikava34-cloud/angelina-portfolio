@@ -1,423 +1,300 @@
 // pages/index.jsx
 import { useEffect, useMemo, useState } from "react";
+import CONTENT from "../lib/content";
 
-/* ====== настройки темы и языка (без внешних файлов) ====== */
-const LIGHT_BG = "#F5DCE1"; // светлый «pantone light wine»
-const DARK_BG  = "#0E0E0F";
-const ACCENT   = "#B04360"; // бордовый акцент для кнопок/иконок
+// Простой Section-обёртка (чтобы не зависеть от внешнего компонента)
+function Section({ id, title, subtitle, children }) {
+  return (
+    <section id={id} className="container mx-auto px-6 pt-16">
+      {title && (
+        <h2 className="text-2xl font-bold">{title}</h2>
+      )}
+      {subtitle && (
+        <p className="text-sm opacity-80 mt-1">{subtitle}</p>
+      )}
+      <div className={title ? "mt-6" : ""}>{children}</div>
+    </section>
+  );
+}
 
-const TEXT = {
+// Mini утилита для скрытия битых картинок (чтобы не было «вопросиков»)
+const hideOnError = (e) => {
+  const card = e.currentTarget.closest(".kb-card");
+  if (card) card.style.display = "none";
+};
+
+// Тексты EN/RU
+const dict = {
   en: {
-    heroTitle: "Angelina Strelnikava",
-    heroSub: "Travel, Portrait & Lifestyle Photography",
-    seeWork: "See my work",
+    nav: { work: "Work", services: "Services", about: "About", contact: "Contact" },
+    seeMyWork: "See my work",
     packages: "Packages",
     featured: "Featured Work",
-    about: "About me",
-    aboutSub: "Travel, Portrait & Lifestyle Photography",
-    aboutP: [
-      "Hi! I'm Angelina, a travel, portrait & lifestyle photographer based in Massachusetts, USA.",
-      "I love cinematic, natural, story-driven images — from quiet everyday moments to events and weddings.",
-      "I speak English and Russian, and I’m happy to plan a session around your story and locations you love."
-    ],
+    aboutTitle: "About me",
     bookNow: "Book now",
     instagram: "Instagram",
-    contact: "Contact",
     from: "from",
+    bookThis: "Book this",
     pricePortrait: "Portrait / Lifestyle",
     priceCouple: "Couple / Love Story",
     priceEvent: "Event / Small Wedding",
     priceCustom: "custom",
-    cardFeatures: [
-      ["60–90 min shooting","15–25 edited photos","Online gallery"],
-      ["90–120 min shooting","25–40 edited photos","Location & styling help"],
-      ["Story-driven coverage","Edited selection","Flexible timing"]
-    ],
-    bookThis: "Book this",
-    email: "Email"
+    priceExpress: "Express Session",
+    contact: "Contact",
   },
   ru: {
-    heroTitle: "Ангелина Стрельникова",
-    heroSub: "Путешествия, портреты и лайфстайл-съёмка",
-    seeWork: "Портфолио",
+    nav: { work: "Работы", services: "Услуги", about: "Обо мне", contact: "Контакты" },
+    seeMyWork: "Смотреть работы",
     packages: "Пакеты",
-    featured: "Лучшие работы",
-    about: "Обо мне",
-    aboutSub: "Путешествия, портреты и лайфстайл-съёмка",
-    aboutP: [
-      "Привет! Я Ангелина — фотограф из Массачусетса (США): путешествия, портреты и лайфстайл.",
-      "Люблю кинематографичные, естественные, «историйные» кадры — от тихих моментов до событий и свадеб.",
-      "Говорю на английском и русском, подберу локации и план сессии под вашу историю."
-    ],
+    featured: "Избранные работы",
+    aboutTitle: "Обо мне",
     bookNow: "Записаться",
     instagram: "Instagram",
-    contact: "Контакты",
     from: "от",
-    pricePortrait: "Портрет / Лайфстайл",
+    bookThis: "Записаться",
+    pricePortrait: "Портрет / Lifestyle",
     priceCouple: "Пара / Love Story",
     priceEvent: "Событие / Небольшая свадьба",
-    priceCustom: "индивидуально",
-    cardFeatures: [
-      ["Съёмка 60–90 мин","15–25 обработанных фото","Онлайн-галерея"],
-      ["Съёмка 90–120 мин","25–40 обработанных фото","Помощь с локацией и образом"],
-      ["Историйная съёмка","Отобранные и обработанные кадры","Гибкое время"]
-    ],
-    bookThis: "Выбрать",
-    email: "Почта"
-  }
+    priceCustom: "по согласованию",
+    priceExpress: "Экспресс-съёмка",
+    contact: "Контакты",
+  },
 };
 
-/* ====== галерея (только локальные файлы из /public/gallery) ======
-   Если какого-то файла нет — карточка сама скрывается (onError).  */
-const GALLERY = [
-  { src: "/gallery/01-boston-train.jpg",  alt: "Boston T platform, motion blur" },
-  { src: "/gallery/02-boston-sailor-mohawk.jpg", alt: "Sailor with mohawk at the helm" },
-  { src: "/gallery/03-umbrella-couple.jpg", alt: "Couple with umbrella at night" },
-  { src: "/gallery/04-sail-bw.jpg", alt: "Sailing in black and white" },
-  { src: "/gallery/05-times-square.jpg", alt: "Times Square street scene" },
-  { src: "/gallery/IMG_8812.jpeg", alt: "Small wedding dance outside 11" }, // новое фото
-];
-
-/* ====== утилиты ====== */
-const Button = ({ children, href, variant="primary" }) => {
-  const cls = variant === "outline"
-    ? "border border-white/20 hover:border-white/40"
-    : "bg-[--accent] hover:brightness-110";
-  return (
-    <a
-      href={href}
-      className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium transition ${cls}`}
-      style={{ ["--accent"]: ACCENT }}
-    >
-      {children}
-    </a>
-  );
+// Описания фичей для карточек пакетов
+const serviceFeatures = {
+  en: {
+    portrait: ["60–90 min shooting", "15–25 edited photos", "Online gallery"],
+    couple: ["90–120 min shooting", "25–40 edited photos", "Location & styling help"],
+    event: ["Story-driven coverage", "Edited selection", "Flexible timing"],
+    express: ["30–40 min photo shoot", "10–15 edited photos", "Online delivery within 2 days"],
+  },
+  ru: {
+    portrait: ["60–90 мин съёмки", "15–25 обработанных фото", "Онлайн-галерея"],
+    couple: ["90–120 мин съёмки", "25–40 обработанных фото", "Помощь с локацией и образом"],
+    event: ["Съёмка с упором на историю", "Отобранные обработанные кадры", "Гибкое время"],
+    express: ["30–40 мин съёмки", "10–15 обработанных фото", "Онлайн-отдача в течение 2 дней"],
+  },
 };
-/* === 1) СПИСОК ФОТО ДЛЯ FEATURED WORK (public/gallery/...) === */
-const featured = [
-  { src: '/gallery/01-subway-couple.jpeg',         alt: 'Subway couple, motion' },
-  { src: '/gallery/02-boston-sailor-mohawk.jpeg',  alt: 'Boston sailor mohawk' },
-  { src: '/gallery/03-boston-sailor-mohawk-bw.jpeg', alt: 'Boston sailor mohawk (B/W)' },
-  { src: '/gallery/04-street-nyc-boy-rain.jpeg',   alt: 'NYC street in rain' },
-  { src: '/gallery/05-street-nyc-batman.jpeg',     alt: 'NYC Batman moment' },
-  { src: '/gallery/06-couple-under-umbrella.jpeg', alt: 'Couple under umbrella' },
-  { src: '/gallery/07-nyc-rain-bikes-bw.jpeg',     alt: 'Cyclists in rain (B/W)' },
-  { src: '/gallery/08-boston-steam-crossing.jpeg', alt: 'Boston steam crossing' },
-  { src: '/gallery/09-wedding-candid-smile.jpeg',  alt: 'Wedding candid smile' },
-  { src: '/gallery/10-wedding-intimate-portrait.jpeg', alt: 'Wedding intimate portrait' },
-  { src: '/gallery/11-acadia-lake-friends.jpeg',   alt: 'Acadia lake with friends' },
-  { src: '/gallery/12-boston-sailor-briefing.jpeg', alt: 'Boston sailor briefing' },
-  { src: '/gallery/24-wedding-back-bay-dance-bw.JPEG', alt: 'Back Bay wedding dance (B/W)' },
-];
 
-/* === 2) СЕКЦИЯ FEATURED WORK — ЗАМЕНИ ЕЁ ЦЕЛИКОМ НА ЭТУ === */
-<Section id="work" title="Featured Work">
-  {/* Сетка карточек: без свободного «чёрного» поля под заголовком */}
-  <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-6">
-    {featured
-      // защита от несуществующих файлов: пустые/битые пути мы не рендерим
-      .filter(item => typeof item.src === 'string' && item.src.length > 0)
-      .map((item, index) => (
-        <div
-          key={item.src}
-          className="group relative overflow-hidden rounded-2xl shadow-sm
-                     ring-1 ring-white/5 dark:ring-black/10
-                     transition-transform duration-700 ease-out
-                     hover:scale-[1.02] hover:shadow-md"
-          style={{ animationDelay: `${(index % 6) * 80}ms` }}
-        >
-          <img
-            src={item.src}
-            alt={item.alt || ''}
-            className="w-full h-[360px] md:h-[420px] object-cover"
-            loading={index < 3 ? 'eager' : 'lazy'}
-            decoding="async"
-            // лёгкий «живой» зум-пан, останавливается при ховере
-            style={{
-              transform: 'scale(1.02)',
-              transition: 'transform 14s ease-in-out',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.0)')}
-            onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1.02)')}
-            onError={e => {
-              // если файл не найден — скрываем карточку полностью
-              const card = e.currentTarget.closest('.group');
-              if (card) card.style.display = 'none';
-            }}
-          />
-        </div>
-      ))}
-  </div>
-</Section>
+// Лёгкие стили без Tailwind конфигурации
+const base = "transition duration-700 ease-in-out";
+const imgHover = "hover:scale-[1.02]";
+
 export default function Home() {
-  const [lang, setLang] = useState("en");
-  const t = useMemo(() => TEXT[lang], [lang]);
-  const [theme, setTheme] = useState("dark");
+  const { brand, contact, socials, gallery, services, testimonials, about } = CONTENT;
 
-  // применяем тему к <html>
+  const [lang, setLang] = useState("en");          // en / ru
+  const [theme, setTheme] = useState("dark");      // dark / light
+
+  const t = useMemo(() => dict[lang], [lang]);
+
+  // Тема: добавляем класс к <html>, чтобы dark/light реально переключались
   useEffect(() => {
-    const html = document.documentElement;
+    const root = document.documentElement;
     if (theme === "dark") {
-      html.classList.add("dark");
-      html.style.background = DARK_BG;
+      root.classList.add("dark");
+      root.style.setProperty("--bg", "24 24 24");
+      root.style.setProperty("--fg", "255 255 255");
+      root.style.setProperty("--card", "255 255 255 / 0.05");
+      root.style.setProperty("--accent", "191 64 81"); // бордовый
     } else {
-      html.classList.remove("dark");
-      html.style.background = LIGHT_BG;
+      root.classList.remove("dark");
+      // Светлый «винный» оттенок (Pantone-like soft wine)
+      root.style.setProperty("--bg", "244 208 213"); // #F4D0D5
+      root.style.setProperty("--fg", "25 25 25");
+      root.style.setProperty("--card", "255 255 255 / 0.60");
+      root.style.setProperty("--accent", "191 64 81");
     }
   }, [theme]);
 
-  // плавная «дыхалка» для картинок (keyframes — инлайн)
+  // Автоязык — по navigator, но только при первом заходе
   useEffect(() => {
-    const id = "kb-zoom-pan";
-    if (!document.getElementById(id)) {
-      const style = document.createElement("style");
-      style.id = id;
-      style.innerHTML = `
-        @keyframes kb-zoom-pan { 
-          0% { transform: scale(1) translate(0,0) } 
-          50% { transform: scale(1.02) translate(0, -1%) } 
-          100% { transform: scale(1) translate(0,0) } 
-        }
-      `;
-      document.head.appendChild(style);
-    }
+    try {
+      const nav = navigator.language || "";
+      if (nav.toLowerCase().startsWith("ru")) setLang("ru");
+    } catch {}
   }, []);
 
-  // email/insta
-  const contact = {
-    email: "angelinastrelnikava34@gmail.com",
-    instagram: "https://www.instagram.com/strelnikava_ph"
-  };
-
   return (
-    <div className="min-h-screen text-white selection:bg-white/10">
-      {/* TOP BAR */}
-      <header className="sticky top-0 z-40 backdrop-blur bg-black/30">
+    <div className="min-h-screen text-[rgb(var(--fg))] bg-[rgb(var(--bg))] selection:bg-black/80 selection:text-white">
+      {/* Header */}
+      <header className="sticky top-0 z-30 backdrop-blur bg-[rgb(var(--bg))]/70 border-b border-white/10">
         <div className="container mx-auto px-6 h-14 flex items-center justify-between">
-          <span className="font-semibold">Strelnikava</span>
+          <a href="#work" className="font-semibold">
+            {brand.lastName || "Portfolio"}
+          </a>
+
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#work" className="hover:opacity-80">Work</a>
-            <a href="#services" className="hover:opacity-80">Services</a>
-            <a href="#about" className="hover:opacity-80">About</a>
-            <a href="#contact" className="hover:opacity-80">Contact</a>
-            <div className="h-5 w-px bg-white/15" />
+            <a href="#work" className="opacity-80 hover:opacity-100">{t.nav.work}</a>
+            <a href="#services" className="opacity-80 hover:opacity-100">{t.nav.services}</a>
+            <a href="#about" className="opacity-80 hover:opacity-100">{t.nav.about}</a>
+            <a href="#contact" className="opacity-80 hover:opacity-100">{t.nav.contact}</a>
+
             <button
-              onClick={() => setLang(l => l === "en" ? "ru" : "en")}
-              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/15"
-              aria-label="Toggle language"
-              title="Toggle language"
+              className="px-2 py-1 rounded-full border border-white/10"
+              onClick={() => setLang((p) => (p === "en" ? "ru" : "en"))}
             >
               {lang === "en" ? "EN" : "RU"}
             </button>
+
             <button
-              onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
-              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/15"
-              aria-label="Toggle theme"
-              title="Toggle theme"
+              className="px-2 py-1 rounded-full border border-white/10"
+              onClick={() => setTheme((p) => (p === "dark" ? "light" : "dark"))}
             >
               {theme === "dark" ? "Dark" : "Light"}
             </button>
-            <Button href="#contact">{t.bookNow}</Button>
+
+            <a
+              href={`mailto:${contact.email}`}
+              className="px-3 py-1 rounded-full bg-[rgb(var(--accent))] text-white"
+            >
+              {t.bookNow}
+            </a>
           </nav>
         </div>
       </header>
 
-      {/* HERO (без миниатюр, центрированный) */}
-      <section className="container mx-auto px-6 pt-16 pb-8">
-        <div className="grid md:grid-cols-2 items-center gap-10">
+      {/* Hero */}
+      <section className="container mx-auto px-6 pt-16">
+        <div className="grid md:grid-cols-[1.2fr,1fr] gap-10 items-center">
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-              {t.heroTitle}
+            <h1 className="text-4xl md:text-5xl font-extrabold">
+              {brand.firstname} {brand.lastName}
             </h1>
-            <p className="mt-3 text-white/80">{t.heroSub}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button href="#work">{t.seeWork}</Button>
-              <Button href="#services" variant="outline">{t.packages}</Button>
+            <p className="mt-3 opacity-80">{brand.tagline}</p>
+
+            <div className="mt-6 flex gap-3">
+              <a href="#work" className="px-4 py-2 rounded-xl bg-[rgb(var(--accent))] text-white">
+                {t.seeMyWork}
+              </a>
+              <a href="#services" className="px-4 py-2 rounded-xl border border-white/10">
+                {t.packages}
+              </a>
             </div>
           </div>
-          {/* правую колонку оставляем пустой — визуально дышит */}
-          <div className="hidden md:block" />
+
+          {/* Убрали верхние мини-превью — по твоему пожеланию */}
         </div>
       </section>
 
-      {/* FEATURED WORK — без пустого пространства */}
-      <section id="work" className="container mx-auto px-6 pt-6">
-        <h2 className="text-2xl font-bold mb-4">{t.featured}</h2>
-
-        {/* плотная «masonry» сетка без дырок */}
-        <div
-          className="
-            grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
-            gap-6 auto-rows-[1px] [grid-auto-flow:dense]
-          "
-        >
-          {GALLERY.filter(x => !!x.src).map((item, i) => (
-            <figure
-              key={item.src + i}
-              className="
-                group relative overflow-hidden rounded-2xl bg-white/5
-                shadow-[0_1px_0_rgba(255,255,255,.04)_inset]
-              "
-            >
+      {/* Featured Work */}
+      <Section id="work" title={t.featured}>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {gallery.map((g, i) => (
+            <div key={`${g.src}-${i}`} className="kb-card overflow-hidden rounded-2xl border border-white/10 bg-[rgb(var(--card))]">
               <img
-                src={item.src}
-                alt={item.alt || ""}
-                loading="lazy"
+                src={g.src}
+                alt={g.alt || ""}
+                loading={i < 3 ? "eager" : "lazy"}
                 decoding="async"
-                onError={(e) => { e.currentTarget.parentElement.style.display = "none"; }}
-                className="
-                  w-full h-full object-cover
-                  transition-transform duration-[800ms]
-                  group-hover:scale-[1.06]
-                  [animation:kb-zoom-pan_12s_ease-in-out_infinite]
-                "
-                style={{ transformOrigin: "center" }}
+                className={`w-full h-[460px] object-cover ${base} ${imgHover}`}
+                onError={hideOnError}
+                style={{ animationDelay: `${(i % 6) * 0.08}s` }}
               />
-              <figcaption className="absolute bottom-2 left-2 text-xs bg-black/40 px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">
-                {item.alt}
-              </figcaption>
-            </figure>
+            </div>
           ))}
         </div>
-      </section>
+      </Section>
 
-      {/* ABOUT */}
-      <section id="about" className="container mx-auto px-6 pt-16">
-        <h2 className="text-2xl font-bold">{t.about}</h2>
-        <p className="text-white/70 text-sm mt-1">{t.aboutSub}</p>
-        <div className="prose prose-invert max-w-2xl text-sm mt-4">
-          {t.aboutP.map((p, i) => <p key={i} className="opacity-90">{p}</p>)}
+      {/* About */}
+      <Section id="about" title={t.aboutTitle} subtitle={about.subtitle}>
+        <div className="prose prose-invert max-w-2xl text-sm sm:text-base">
+          {(about.paragraphs || []).map((p, i) => <p key={i} className="opacity-90">{p}</p>)}
         </div>
+
         <div className="mt-6 flex gap-3">
-          <Button href={`mailto:${contact.email}`}>{t.bookNow}</Button>
-          <Button href={contact.instagram} variant="outline">{t.instagram}</Button>
-        </div>
-      </section>
-
-      {/* PACKAGES */}
-<section id="services" className="container mx-auto px-6 pt-16">
-  <h2 className="text-2xl font-bold">Packages</h2>
-
-  <div className="grid md:grid-cols-4 gap-6 mt-6">
-    {/* 1 — Portrait / Lifestyle */}
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">{t.pricePortrait}</h3>
-        <span className="text-xs text-white/60">{t.from} $190</span>
-      </div>
-      <ul className="mt-4 space-y-2 text-sm">
-        {t.cardFeatures[0].map((s, i) => (
-          <li key={i} className="list-disc list-inside">{s}</li>
-        ))}
-      </ul>
-      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
-        {t.bookThis}
-      </Button>
-    </div>
-
-    {/* 2 — Couple / Love Story */}
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">{t.priceCouple}</h3>
-        <span className="text-xs text-white/60">{t.from} $260</span>
-      </div>
-      <ul className="mt-4 space-y-2 text-sm">
-        {t.cardFeatures[1].map((s, i) => (
-          <li key={i} className="list-disc list-inside">{s}</li>
-        ))}
-      </ul>
-      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
-        {t.bookThis}
-      </Button>
-    </div>
-
-    {/* 3 — Event / Small Wedding */}
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">{t.priceEvent}</h3>
-        <span className="text-xs text-white/60">{t.priceCustom}</span>
-      </div>
-      <ul className="mt-4 space-y-2 text-sm">
-        {t.cardFeatures[2].map((s, i) => (
-          <li key={i} className="list-disc list-inside">{s}</li>
-        ))}
-      </ul>
-      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
-        {t.bookThis}
-      </Button>
-    </div>
-
-    {/* 4 — Новая: Express Session */}
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">
-          {lang === "en" ? "Express Session" : "Экспресс-съёмка"}
-        </h3>
-        <span className="text-xs text-white/60">
-          {t.from} ${lang === "en" ? "120" : "120"}
-        </span>
-      </div>
-      <ul className="mt-4 space-y-2 text-sm">
-        {lang === "en" ? (
-          <>
-            <li className="list-disc list-inside">30–40 min photo shoot</li>
-            <li className="list-disc list-inside">10–15 edited photos</li>
-            <li className="list-disc list-inside">Online delivery within 2 days</li>
-          </>
-        ) : (
-          <>
-            <li className="list-disc list-inside">30–40 мин съёмки</li>
-            <li className="list-disc list-inside">10–15 обработанных фото</li>
-            <li className="list-disc list-inside">Онлайн-доставка в течение 2 дней</li>
-          </>
-        )}
-      </ul>
-      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
-        {t.bookThis}
-      </Button>
-    </div>
-  </div>
-</section>
-
-      {/* CONTACT */}
-      <section id="contact" className="container mx-auto px-6 pt-16 pb-20">
-        <h2 className="text-2xl font-bold">{t.contact}</h2>
-        <div className="mt-4 flex flex-col gap-3 text-sm">
-          {/* email */}
           <a
             href={`mailto:${contact.email}`}
-            className="inline-flex items-center gap-2 opacity-90 hover:opacity-100"
+            className="px-4 py-2 rounded-xl bg-[rgb(var(--accent))] text-white"
           >
-            {/* mail icon */}
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" style={{ color: ACCENT }}>
-              <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z"/>
-            </svg>
-            <span>{contact.email}</span>
+            {t.bookNow}
           </a>
-
-          {/* instagram */}
           <a
-            href={contact.instagram}
+            href={socials.instagram}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 opacity-90 hover:opacity-100"
+            className="px-4 py-2 rounded-xl border border-white/10"
           >
-            {/* insta icon */}
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" style={{ color: ACCENT }}>
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm6.5-.75a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Z"/>
-            </svg>
-            <span>@strelnikava_ph</span>
+            {t.instagram}
           </a>
         </div>
-      </section>
+      </Section>
 
-      {/* FOOTER */}
-      <footer className="text-center text-xs text-white/60 pb-10">
-        © {new Date().getFullYear()} Strelnikava
+      {/* Packages (4 карточки, включая Express) */}
+      <Section id="services" title="Packages">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((s, i) => (
+            <div
+              key={s.id}
+              className="rounded-2xl border border-white/10 bg-[rgb(var(--card))] p-5 hover:border-white/20 transition"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">
+                  {{
+                    portrait: t.pricePortrait,
+                    couple: t.priceCouple,
+                    event: t.priceEvent,
+                    express: t.priceExpress,
+                  }[s.id] || "Package"}
+                </h3>
+                <span className="text-xs opacity-70">
+                  {s.from === "custom" ? t.priceCustom : `${t.from} $${s.from}`}
+                </span>
+              </div>
+
+              <ul className="mt-4 space-y-2 text-sm">
+                {serviceFeatures[lang][s.id].map((x, k) => (
+                  <li key={k} className="flex gap-2">
+                    <span className="mt-[7px] inline-block h-1.5 w-1.5 rounded-full bg-[rgb(var(--accent))]" />
+                    <span>{x}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href={`mailto:${contact.email}`}
+                className="mt-6 inline-flex items-center justify-center w-full h-10 rounded-xl bg-[rgb(var(--accent))] text-white"
+              >
+                {t.bookThis}
+              </a>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Contact */}
+      <Section id="contact" title={t.contact}>
+        <div className="grid sm:grid-cols-2 gap-6">
+          <a
+            href={`mailto:${contact.email}`}
+            className="flex items-center gap-3 p-4 rounded-2xl border border-white/10 bg-[rgb(var(--card))] hover:border-white/20 transition"
+          >
+            {/* mail icon */}
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 2v.01L12 12L4 6.01V6h16ZM4 18V8.236l8 5.999l8-5.999V18H4Z"/>
+            </svg>
+            <span className="opacity-90">{contact.email}</span>
+          </a>
+
+          <a
+            href={socials.instagram}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-3 p-4 rounded-2xl border border-white/10 bg-[rgb(var(--card))] hover:border-white/20 transition"
+          >
+            {/* insta icon */}
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5m10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m-5 3a6 6 0 1 1 0 12a6 6 0 0 1 0-12m0 2a4 4 0 1 0 .001 8.001A4 4 0 0 0 12 9m5.5-3a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3"/>
+            </svg>
+            <span className="opacity-90">@strelnikava_ph</span>
+          </a>
+        </div>
+      </Section>
+
+      <footer className="container mx-auto px-6 py-10 text-center opacity-60 text-xs">
+        © {new Date().getFullYear()} {brand.lastName}
       </footer>
     </div>
   );
 }
-
-/* ====== простые util классы Tailwind (если их нет — Tailwind всё равно применит) ======
-   Не требуются внешние CSS-файлы: мы используем готовые utility-классы. */
