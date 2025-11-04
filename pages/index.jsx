@@ -58,20 +58,26 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Три превью слева/справа — можно заменить своими */}
-          <div className="grid grid-cols-3 gap-4">
-            {[0, 1, 2].map((i) => {
-              const item = gallery[i] || {};
-              return (
-                <div key={i} className="relative overflow-hidden rounded-2xl">
-                  <img
-                    src={item.src || '/gallery/01-subway-couple.jpeg'}
-                    alt={item.alt || ''}
-                    className="w-full h-full object-cover"
-                    loading={i < 1 ? 'eager' : 'lazy'}
-                    decoding="async"
-                  />
-                </div>
+          {/* Три превью из галереи — одинаковый размер */}
+<div className="grid grid-cols-3 gap-4 justify-items-center">
+  {[0, 1, 2].map((i) => {
+    const item = gallery[i] || {};
+    return (
+      <div
+        key={i}
+        className="relative overflow-hidden rounded-2xl shadow-sm"
+      >
+        <img
+          src={item.src || '/gallery/01-subway-couple.jpeg'}
+          alt={item.alt || ''}
+          className="h-44 w-32 object-cover rounded-2xl"
+          loading={i < 1 ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      </div>
+    );
+  })}
+</div>
               );
             })}
           </div>
@@ -99,7 +105,11 @@ export default function Home() {
       </Section>
 
       {/* ABOUT */}
-      <Section id="about" title="About me" subtitle="">
+     <Section
+  id="about"
+  title="About me"
+  subtitle="Travel, Portrait & Lifestyle Photography"
+>
         <div className="prose prose-invert max-w-2xl text-sm sm:text-base">
           {Array.isArray(about?.paragraphs) && about.paragraphs.map((p, i) => (
             <p key={i} className="opacity-90">{p}</p>
