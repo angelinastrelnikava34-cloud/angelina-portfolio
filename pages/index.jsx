@@ -99,35 +99,33 @@ export default function Home({ toggleDark, dark }) {
       </section>
 
       {/* Галерея работ */}
-      <Section
-        id="work"
-        title={t?.work?.title ?? 'Featured Work'}
-        subtitle={t?.work?.subtitle ?? 'A selection of travel, portrait, and story moments.'}
+     <Section
+  id="work"
+  title={(dict?.work?.title) || 'Featured Work'}
+  subtitle={(dict?.work?.subtitle) || ''}
+>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {CONTENT.gallery.map((item, index) => (
+      <div
+        key={item.src}
+        className="relative overflow-hidden rounded-2xl kb-paused"
+        style={{ aspectRatio: item.ratio || '3 / 4' }} /* варианты: '2 / 3', '4 / 3', '1 / 1' */
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {gallery.map((item, index) => (
-            <div
-              key={item.src}
-              className="relative overflow-hidden rounded-2xl group shadow"
-              style={{ aspectRatio: item?.ratio || '3 / 4' }}
-            >
-              <img
-                src={item.src}
-                alt={item.alt || ''}
-                className={clsx(
-                  'w-full h-full object-cover',
-                  'transition-transform duration-[7000ms] ease-in-out group-hover:scale-110'
-                )}
-                loading={index < 3 ? 'eager' : 'lazy'}
-                decoding="async"
-                style={{
-                  objectPosition: item?.focal || 'center',
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </Section>
+        <img
+          src={item.src}
+          alt={item.alt || ''}
+          className="w-full h-full object-cover kb-animate"
+          loading={index < 3 ? 'eager' : 'lazy'}
+          decoding="async"
+          style={{
+            animationDelay: `${(index % 6) * 0.8}s`,
+            objectPosition: item.focal || 'center'
+          }}
+        />
+      </div>
+    ))}
+  </div>
+</Section>
 
       {/* Остальные секции можно добавить позже */}
       {/* <Section id="services" title="Services">...</Section> */}
