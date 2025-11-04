@@ -295,51 +295,89 @@ export default function Home() {
       </section>
 
       {/* PACKAGES */}
-      <section id="services" className="container mx-auto px-6 pt-16">
-        <h2 className="text-2xl font-bold">Packages</h2>
+<section id="services" className="container mx-auto px-6 pt-16">
+  <h2 className="text-2xl font-bold">Packages</h2>
 
-        <div className="grid md:grid-cols-3 gap-6 mt-6">
-          {/* 1 */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{t.pricePortrait}</h3>
-              <span className="text-xs text-white/60">{t.from} $190</span>
-            </div>
-            <ul className="mt-4 space-y-2 text-sm">
-              {t.cardFeatures[0].map((s, i) => <li key={i} className="list-disc list-inside">{s}</li>)}
-            </ul>
-            <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
-              {t.bookThis}
-            </Button>
-          </div>
-          {/* 2 */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{t.priceCouple}</h3>
-              <span className="text-xs text-white/60">{t.from} $260</span>
-            </div>
-            <ul className="mt-4 space-y-2 text-sm">
-              {t.cardFeatures[1].map((s, i) => <li key={i} className="list-disc list-inside">{s}</li>)}
-            </ul>
-            <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
-              {t.bookThis}
-            </Button>
-          </div>
-          {/* 3 */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{t.priceEvent}</h3>
-              <span className="text-xs text-white/60">{t.priceCustom}</span>
-            </div>
-            <ul className="mt-4 space-y-2 text-sm">
-              {t.cardFeatures[2].map((s, i) => <li key={i} className="list-disc list-inside">{s}</li>)}
-            </ul>
-            <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
-              {t.bookThis}
-            </Button>
-          </div>
-        </div>
-      </section>
+  <div className="grid md:grid-cols-4 gap-6 mt-6">
+    {/* 1 — Portrait / Lifestyle */}
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">{t.pricePortrait}</h3>
+        <span className="text-xs text-white/60">{t.from} $190</span>
+      </div>
+      <ul className="mt-4 space-y-2 text-sm">
+        {t.cardFeatures[0].map((s, i) => (
+          <li key={i} className="list-disc list-inside">{s}</li>
+        ))}
+      </ul>
+      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
+        {t.bookThis}
+      </Button>
+    </div>
+
+    {/* 2 — Couple / Love Story */}
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">{t.priceCouple}</h3>
+        <span className="text-xs text-white/60">{t.from} $260</span>
+      </div>
+      <ul className="mt-4 space-y-2 text-sm">
+        {t.cardFeatures[1].map((s, i) => (
+          <li key={i} className="list-disc list-inside">{s}</li>
+        ))}
+      </ul>
+      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
+        {t.bookThis}
+      </Button>
+    </div>
+
+    {/* 3 — Event / Small Wedding */}
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">{t.priceEvent}</h3>
+        <span className="text-xs text-white/60">{t.priceCustom}</span>
+      </div>
+      <ul className="mt-4 space-y-2 text-sm">
+        {t.cardFeatures[2].map((s, i) => (
+          <li key={i} className="list-disc list-inside">{s}</li>
+        ))}
+      </ul>
+      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
+        {t.bookThis}
+      </Button>
+    </div>
+
+    {/* 4 — Новая: Express Session */}
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">
+          {lang === "en" ? "Express Session" : "Экспресс-съёмка"}
+        </h3>
+        <span className="text-xs text-white/60">
+          {t.from} ${lang === "en" ? "120" : "120"}
+        </span>
+      </div>
+      <ul className="mt-4 space-y-2 text-sm">
+        {lang === "en" ? (
+          <>
+            <li className="list-disc list-inside">30–40 min photo shoot</li>
+            <li className="list-disc list-inside">10–15 edited photos</li>
+            <li className="list-disc list-inside">Online delivery within 2 days</li>
+          </>
+        ) : (
+          <>
+            <li className="list-disc list-inside">30–40 мин съёмки</li>
+            <li className="list-disc list-inside">10–15 обработанных фото</li>
+            <li className="list-disc list-inside">Онлайн-доставка в течение 2 дней</li>
+          </>
+        )}
+      </ul>
+      <Button href={`mailto:${contact.email}`} className="w-full block mt-6">
+        {t.bookThis}
+      </Button>
+    </div>
+  </div>
+</section>
 
       {/* CONTACT */}
       <section id="contact" className="container mx-auto px-6 pt-16 pb-20">
