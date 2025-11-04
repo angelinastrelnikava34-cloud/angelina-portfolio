@@ -1,1 +1,21 @@
+/* styles/gallery.css */
 
+/* Плавный зум+пан для карточек в галерее */
+.kb-animate {
+  animation: kb-zoom-pan 14s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Навёл мышку — остановили анимацию (чтобы рассмотреть) */
+.kb-paused:hover img {
+  animation-play-state: paused;
+}
+
+/* Ключевые кадры: лёгкий зум и небольшое смещение */
+@keyframes kb-zoom-pan {
+  0%   { transform: scale(1.00) translate(0%, 0%); }
+  25%  { transform: scale(1.02) translate(0%, -2%); }
+  50%  { transform: scale(1.03) translate(1%,  1%); }
+  75%  { transform: scale(1.02) translate(-1%, 1%); }
+  100% { transform: scale(1.02) translate(0%, 0%); }
+}
