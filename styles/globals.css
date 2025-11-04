@@ -50,3 +50,34 @@ hr{border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent)}
 .kb-paused:hover img {
   animation-play-state: paused;
 }
+/* Базовые переменные темы (работают вместе с твоим Tailwind) */
+:root.light {
+  --card-bg: #ffffff;
+  --card-border: rgba(0,0,0,.08);
+  --card-shadow: 0 1px 2px rgba(0,0,0,.06);
+  --muted: rgba(0,0,0,.55);
+}
+:root.dark {
+  --card-bg: #1a1a1a;
+  --card-border: rgba(255,255,255,.08);
+  --card-shadow: 0 1px 2px rgba(0,0,0,.5);
+  --muted: rgba(255,255,255,.6);
+}
+
+/* Универсальные карточки (для пакетов) */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: 1rem;
+}
+
+/* Кнопки-иконки в контактах */
+.icon-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; border-radius:9999px;
+  border:1px solid var(--card-border); background:var(--card-bg);
+  transition: transform .15s ease, border-color .15s ease;
+}
+.icon-btn:hover { transform: translateY(-1px); border-color: rgba(127,86,95,.45); }
+.icon-btn svg { width:20px; height:20px; }
