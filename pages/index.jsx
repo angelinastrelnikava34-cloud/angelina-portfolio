@@ -93,7 +93,62 @@ const Button = ({ children, href, variant="primary" }) => {
     </a>
   );
 };
+/* === 1) СПИСОК ФОТО ДЛЯ FEATURED WORK (public/gallery/...) === */
+const featured = [
+  { src: '/gallery/01-subway-couple.jpeg',         alt: 'Subway couple, motion' },
+  { src: '/gallery/02-boston-sailor-mohawk.jpeg',  alt: 'Boston sailor mohawk' },
+  { src: '/gallery/03-boston-sailor-mohawk-bw.jpeg', alt: 'Boston sailor mohawk (B/W)' },
+  { src: '/gallery/04-street-nyc-boy-rain.jpeg',   alt: 'NYC street in rain' },
+  { src: '/gallery/05-street-nyc-batman.jpeg',     alt: 'NYC Batman moment' },
+  { src: '/gallery/06-couple-under-umbrella.jpeg', alt: 'Couple under umbrella' },
+  { src: '/gallery/07-nyc-rain-bikes-bw.jpeg',     alt: 'Cyclists in rain (B/W)' },
+  { src: '/gallery/08-boston-steam-crossing.jpeg', alt: 'Boston steam crossing' },
+  { src: '/gallery/09-wedding-candid-smile.jpeg',  alt: 'Wedding candid smile' },
+  { src: '/gallery/10-wedding-intimate-portrait.jpeg', alt: 'Wedding intimate portrait' },
+  { src: '/gallery/11-acadia-lake-friends.jpeg',   alt: 'Acadia lake with friends' },
+  { src: '/gallery/12-boston-sailor-briefing.jpeg', alt: 'Boston sailor briefing' },
+  { src: '/gallery/24-wedding-back-bay-dance-bw.JPEG', alt: 'Back Bay wedding dance (B/W)' },
+];
 
+/* === 2) СЕКЦИЯ FEATURED WORK — ЗАМЕНИ ЕЁ ЦЕЛИКОМ НА ЭТУ === */
+<Section id="work" title="Featured Work">
+  {/* Сетка карточек: без свободного «чёрного» поля под заголовком */}
+  <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-6">
+    {featured
+      // защита от несуществующих файлов: пустые/битые пути мы не рендерим
+      .filter(item => typeof item.src === 'string' && item.src.length > 0)
+      .map((item, index) => (
+        <div
+          key={item.src}
+          className="group relative overflow-hidden rounded-2xl shadow-sm
+                     ring-1 ring-white/5 dark:ring-black/10
+                     transition-transform duration-700 ease-out
+                     hover:scale-[1.02] hover:shadow-md"
+          style={{ animationDelay: `${(index % 6) * 80}ms` }}
+        >
+          <img
+            src={item.src}
+            alt={item.alt || ''}
+            className="w-full h-[360px] md:h-[420px] object-cover"
+            loading={index < 3 ? 'eager' : 'lazy'}
+            decoding="async"
+            // лёгкий «живой» зум-пан, останавливается при ховере
+            style={{
+              transform: 'scale(1.02)',
+              transition: 'transform 14s ease-in-out',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.0)')}
+            onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1.02)')}
+            onError={e => {
+              // если файл не найден — скрываем карточку полностью
+              const card = e.currentTarget.closest('.group');
+              if (card) card.style.display = 'none';
+            }}
+          />
+        </div>
+      ))}
+  </div>
+</Section>
 export default function Home() {
   const [lang, setLang] = useState("en");
   const t = useMemo(() => TEXT[lang], [lang]);
