@@ -18,11 +18,11 @@ const InstagramIcon = (props) => (
 export default function Home() {
   const { brand, contact, socials, gallery = [], services = [] } = CONTENT;
 
-  /* ===== язык ===== */
+  // язык
   const [lang, setLang] = useState('en');
   const t = (en, ru) => (lang === 'ru' ? ru : en);
 
-  /* ===== тема ===== */
+  // тема
   const [theme, setTheme] = useState('light');
   useEffect(() => {
     const saved = localStorage.getItem('theme');
@@ -40,53 +40,46 @@ export default function Home() {
     if (next === 'dark') root.classList.add('dark'); else root.classList.remove('dark');
   };
 
-  /* безопасные заглушки для первых кадров */
+  // безопасные заглушки для первых кадров (если вдруг чего-то нет)
   const safe = (i, alt='') => gallery[i] || { src: `/gallery/${String(i+1).padStart(2,'0')}-placeholder.jpeg`, alt };
 
   return (
     <div className="min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
-      {/* ===== NAVBAR ===== */}
+      {/* NAVBAR */}
       <nav className="sticky top-0 z-40 backdrop-blur bg-[rgba(255,255,255,0.45)] dark:bg-[rgba(0,0,0,0.45)]">
         <div className="container h-14 flex items-center justify-between">
-          <a href="#home" className="font-medium">{brand?.firstName} {brand?.lastName}</a>
+          <a href="#home" className="font-medium">
+            {brand?.firstName} {brand?.lastName}
+          </a>
+
           <div className="flex items-center gap-4 text-sm">
             <a href="#work" className="opacity-90 hover:opacity-100">{t('Work','Портфолио')}</a>
             <a href="#packages" className="opacity-90 hover:opacity-100">{t('Services','Услуги')}</a>
             <a href="#about" className="opacity-90 hover:opacity-100">{t('About','Обо мне')}</a>
             <a href="#contact" className="opacity-90 hover:opacity-100">{t('Contact','Контакты')}</a>
 
-            {/* язык */}
-            <button
-              onClick={() => setLang(lang === 'en' ? 'ru' : 'en')}
-              className="btn btn-outline h-8 px-3"
-              aria-label="Language"
-            >
+            <button onClick={() => setLang(lang === 'en' ? 'ru' : 'en')}
+                    className="btn btn-outline h-8 px-3" aria-label="Language">
               {lang === 'en' ? 'RU' : 'EN'}
             </button>
 
-            {/* тема */}
-            <button
-              onClick={toggleTheme}
-              className="btn btn-outline h-8 px-3"
-              aria-label="Theme"
-            >
+            <button onClick={toggleTheme}
+                    className="btn btn-outline h-8 px-3" aria-label="Theme">
               {theme === 'dark' ? t('Light','Светлая') : t('Dark','Тёмная')}
             </button>
 
-            {/* запись */}
-            <a
-              href={`mailto:${contact?.email}?subject=Photography%20booking`}
-              className="btn btn-primary h-8"
-            >
+            <a href={`mailto:${contact?.email}?subject=Photography%20booking`}
+               className="btn btn-primary h-8">
               {t('Book now','Записаться')}
             </a>
           </div>
         </div>
       </nav>
 
-      {/* ===== HERO ===== */}
+      {/* HERO — новый, более сбалансированный коллаж 5 фото */}
       <header id="home" className="container">
-        <div className="py-10 md:py-16 grid grid-cols-1 md:grid-cols-[1.1fr,1fr] gap-8 items-start">
+        <div className="py-10 md:py-16 grid grid-cols-1 lg:grid-cols-[1.05fr,1fr] gap-10 items-start">
+          {/* текст */}
           <div>
             <h1 className="text-3xl md:text-5xl font-semibold tracking-tight">
               {brand?.firstName} {brand?.lastName}
@@ -94,46 +87,53 @@ export default function Home() {
             <p className="mt-2 text-sm md:text-base opacity-80">
               Travel, Portrait & Lifestyle Photography
             </p>
-
             <div className="mt-6 flex gap-3">
               <a href="#work" className="btn btn-primary">{t('See my work','Портфолио')}</a>
               <a href="#packages" className="btn btn-outline">{t('Packages','Пакеты')}</a>
             </div>
           </div>
 
-          {/* 5 мини-превью, разные размеры + анимация */}
-          <div className="grid grid-cols-4 grid-rows-3 gap-4 kb-paused">
-            {/* высокий */}
-            <div className="col-span-2 row-span-3 relative overflow-hidden rounded-2xl shadow">
-              <img src={safe(0).src} alt={safe(0).alt||''} className="h-full w-full object-cover kb-animate" />
+          {/* коллаж: 1 высокий слева + две колонны справа (средний + маленький) */}
+          <div className="grid grid-cols-3 gap-4 items-stretch kb-paused">
+            {/* высокий (колонка 1) */}
+            <div className="relative overflow-hidden rounded-2xl shadow col-span-1 h-[26rem]">
+              <img src={safe(0).src} alt={safe(0).alt||''}
+                   className="h-full w-full object-cover kb-animate" />
             </div>
-            {/* квадратный */}
-            <div className="col-span-2 row-span-2 relative overflow-hidden rounded-2xl shadow">
-              <img src={safe(1).src} alt={safe(1).alt||''} className="h-full w-full object-cover kb-animate" />
+
+            {/* колонка 2: средний + маленький */}
+            <div className="col-span-1 flex flex-col gap-4">
+              <div className="relative overflow-hidden rounded-2xl shadow h-56">
+                <img src={safe(1).src} alt={safe(1).alt||''}
+                     className="h-full w-full object-cover kb-animate" />
+              </div>
+              <div className="relative overflow-hidden rounded-2xl shadow h-32">
+                <img src={safe(2).src} alt={safe(2).alt||''}
+                     className="h-full w-full object-cover kb-animate" />
+              </div>
             </div>
-            {/* малый */}
-            <div className="col-span-2 row-span-1 relative overflow-hidden rounded-2xl shadow">
-              <img src={safe(2).src} alt={safe(2).alt||''} className="h-full w-full object-cover kb-animate" />
-            </div>
-            {/* два малых справа снизу */}
-            <div className="col-span-1 row-span-1 relative overflow-hidden rounded-2xl shadow">
-              <img src={safe(3).src} alt={safe(3).alt||''} className="h-full w-full object-cover kb-animate" />
-            </div>
-            <div className="col-span-1 row-span-1 relative overflow-hidden rounded-2xl shadow">
-              <img src={safe(4).src} alt={safe(4).alt||''} className="h-full w-full object-cover kb-animate" />
+
+            {/* колонка 3: средний + маленький */}
+            <div className="col-span-1 flex flex-col gap-4">
+              <div className="relative overflow-hidden rounded-2xl shadow h-56">
+                <img src={safe(3).src} alt={safe(3).alt||''}
+                     className="h-full w-full object-cover kb-animate" />
+              </div>
+              <div className="relative overflow-hidden rounded-2xl shadow h-32">
+                <img src={safe(4).src} alt={safe(4).alt||''}
+                     className="h-full w-full object-cover kb-animate" />
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* ===== WORK / GALLERY ===== */}
+      {/* WORK / GALLERY */}
       <Section id="work" title={t('Featured Work','Избранные работы')}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 kb-paused">
           {gallery.slice(0, 18).map((item, index) => (
-            <div
-              key={item.src || index}
-              className="relative overflow-hidden rounded-2xl shadow group transition-transform duration-500 hover:scale-[1.01]"
-            >
+            <div key={item.src || index}
+                 className="relative overflow-hidden rounded-2xl shadow group transition-transform duration-500 hover:scale-[1.01]">
               <img
                 src={item.src}
                 alt={item.alt || ''}
@@ -147,7 +147,7 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ===== ABOUT ===== */}
+      {/* ABOUT */}
       <Section id="about" title={t('About me','Обо мне')} subtitle="Travel, Portrait & Lifestyle Photography">
         <div className="prose prose-invert max-w-2xl text-sm sm:text-base">
           {(CONTENT?.about?.paragraphs || [
@@ -161,27 +161,26 @@ export default function Home() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
-          <a
-            className="btn btn-primary w-full sm:w-auto"
-            href={`mailto:${contact?.email}?subject=Photography%20booking`}
-          >
+          <a className="btn btn-primary w-full sm:w-auto"
+             href={`mailto:${contact?.email}?subject=Photography%20booking`}>
             {t('Book a session','Записаться')}
           </a>
           {socials?.instagram && (
-            <a className="btn btn-outline w-full sm:w-auto" href={socials.instagram} target="_blank" rel="noreferrer">
+            <a className="btn btn-outline w-full sm:w-auto"
+               href={socials.instagram} target="_blank" rel="noreferrer">
               Instagram
             </a>
           )}
         </div>
       </Section>
 
-      {/* ===== PACKAGES ===== */}
+      {/* PACKAGES */}
       <Section id="packages" title={t('Packages','Пакеты')}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {(Array.isArray(services) && services.length ? services : [
-            { name: t('Mini','Мини'), price: '$120', features: [t('30 min','30 мин'), t('10 edited photos','10 обработанных фото'), t('1 location','1 локация')] },
+            { name: t('Mini','Мини'),     price: '$120', features: [t('30 min','30 мин'), t('10 edited photos','10 обработанных фото'), t('1 location','1 локация')] },
             { name: t('Standard','Стандарт'), price: '$220', features: [t('60 min','60 мин'), t('25 edited photos','25 обработанных фото'), t('1–2 locations','1–2 локации')] },
-            { name: t('Premium','Премиум'), price: '$390', features: [t('120 min','120 мин'), t('50 edited photos','50 обработанных фото'), t('multi-location','несколько локаций')] }
+            { name: t('Premium','Премиум'),   price: '$390', features: [t('120 min','120 мин'), t('50 edited photos','50 обработанных фото'), t('multi-location','несколько локаций')] }
           ]).map((s, i) => (
             <div key={i} className="card p-5 hover:shadow-md transition kb-paused">
               <div className="flex items-baseline justify-between">
@@ -193,10 +192,8 @@ export default function Home() {
                   {s.features.map((f, k) => (<li key={k} className="flex gap-2"><span>•</span><span>{f}</span></li>))}
                 </ul>
               )}
-              <a
-                href={`mailto:${contact?.email}?subject=${encodeURIComponent(`Booking: ${s.name}`)}`}
-                className="btn btn-primary mt-5 w-full"
-              >
+              <a href={`mailto:${contact?.email}?subject=${encodeURIComponent(`Booking: ${s.name}`)}`}
+                 className="btn btn-primary mt-5 w-full">
                 {t('Book this','Выбрать пакет')}
               </a>
             </div>
@@ -204,7 +201,7 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ===== CONTACT ===== */}
+      {/* CONTACT */}
       <Section id="contact" title={t('Contact','Контакты')}>
         <div className="flex flex-col gap-4 text-sm">
           {contact?.email && (
@@ -213,7 +210,8 @@ export default function Home() {
             </a>
           )}
           {socials?.instagram && (
-            <a href={socials.instagram} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:opacity-80">
+            <a href={socials.instagram} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-2 hover:opacity-80">
               <InstagramIcon className="h-5 w-5" /><span>@strelnikava_ph</span>
             </a>
           )}
