@@ -1,83 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@tailwind base; @tailwind components; @tailwind utilities;
-
-/* Color tokens */
+/* ===== Цветовые токены (минимально и безопасно) ===== */
 :root{
-  --bg: 246 220 224;        /* #F6DCE0 */
-  --fg: 27 27 27;           /* #1B1B1B */
-  --accent: 126 36 58;      /* #7E243A wine */
-  --accent-contrast: 255 255 255;
-  --surface: 255 255 255;
-  --surface-muted: 255 255 255 / 0.6;
-  --border: 126 36 58 / 0.15;
+  --fg: 17 17 17;
+  --bg: 247 228 232;
 }
-.dark{
-  --bg: 43 14 19;           /* #2B0E13 */
-  --fg: 251 239 242;        /* #FBEFF2 */
-  --accent: 230 167 180;    /* #E6A7B4 */
-  --accent-contrast: 43 14 19;
-  --surface: 59 20 27;
-  --surface-muted: 255 255 255 / 0.05;
-  --border: 230 167 180 / 0.20;
+.dark:root{
+  --fg: 245 245 245;
+  --bg: 16 16 16;
 }
+
 html, body { height: 100%; }
 body{ background: rgb(var(--bg)); color: rgb(var(--fg)); }
-.container{@apply max-w-6xl mx-auto px-4}
-.card{ background: color-mix(in oklab, rgb(var(--surface)) 80%, transparent); @apply rounded-2xl border shadow-sm backdrop-blur; border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent); }
-.btn{@apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium border transition; border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent); }
-.btn-primary{ background: rgb(var(--accent)); color: rgb(var(--accent-contrast)); border-color: transparent; }
-.btn-primary:hover{ filter: brightness(0.95); }
-.btn-outline{ background: transparent; color: rgb(var(--fg)); }
-.btn-outline:hover{ background: color-mix(in oklab, rgb(var(--surface)) 40%, transparent); }
-.badge{ @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs; border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent); }
-a:hover{ opacity: .9 }
-img{@apply select-none}
-hr{border-color: color-mix(in oklab, rgb(var(--border)) 100%, transparent)}
-/* --- Ken Burns / Pan & Zoom --- */
-@keyframes kb-zoom-pan {
-  0%   { transform: scale(1.05) translate(0%, 0%); }
-  50%  { transform: scale(1.12) translate(-2%, -2%); }
-  100% { transform: scale(1.18) translate(2%, 2%); }
-}
 
-/* универсальный класс для картинок в карточках */
-.kb-animate {
-  animation: kb-zoom-pan 14s ease-in-out infinite alternate;
+/* контейнер */
+.container{ @apply max-w-6xl mx-auto px-4; }
+
+/* простые кнопки */
+.btn{ @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm transition; }
+.btn-primary{ @apply bg-rose-800 text-white hover:brightness-110; }
+.btn-outline{ @apply border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10; }
+
+/* карточные тени/бордеры по умолчанию */
+.card{ @apply rounded-2xl border border-black/10 dark:border-white/10 shadow-sm; }
+
+/* ===== Анимация зум-пан для всех картинок ===== */
+.kb-animate{
+  animation: kb-zoom-pan 12s ease-in-out infinite alternate;
   will-change: transform;
 }
+.kb-paused:hover .kb-animate,
+.kb-paused:hover img{ animation-play-state: paused; }
 
-/* на hover останавливаем (удобно рассмотреть кадр) */
-.kb-paused:hover img {
-  animation-play-state: paused;
-}
-/* Базовые переменные темы (работают вместе с твоим Tailwind) */
-:root.light {
-  --card-bg: #ffffff;
-  --card-border: rgba(0,0,0,.08);
-  --card-shadow: 0 1px 2px rgba(0,0,0,.06);
-  --muted: rgba(0,0,0,.55);
-}
-:root.dark {
-  --card-bg: #1a1a1a;
-  --card-border: rgba(255,255,255,.08);
-  --card-shadow: 0 1px 2px rgba(0,0,0,.5);
-  --muted: rgba(255,255,255,.6);
+/* Ключевые кадры */
+@keyframes kb-zoom-pan{
+  0%   { transform: scale(1.02) translate(0%, 0%); }
+  50%  { transform: scale(1.08) translate(2%, -2%); }
+  100% { transform: scale(1.02) translate(-2%, 2%); }
 }
 
-/* Универсальные карточки (для пакетов) */
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  box-shadow: var(--card-shadow);
-  border-radius: 1rem;
-}
-
-/* Кнопки-иконки в контактах */
-.icon-btn {
-  display:inline-flex; align-items:center; justify-content:center;
-  width:44px; height:44px; border-radius:9999px;
-  border:1px solid var(--card-border); background:var(--card-bg);
-  transition: transform .15s ease, border-color .15s ease;
-}
-.icon-btn:hover { transform: translateY(-1px); border-color: rgba(127,86,95,.45); }
-.icon-btn svg { width:20px; height:20px; }
+/* markdown-тексты */
+.prose{ @apply leading-relaxed; }
+.prose-invert{ @apply dark:text-white text-black; }
