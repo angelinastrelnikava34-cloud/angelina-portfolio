@@ -183,7 +183,61 @@ export default function Home({ toggleDark, dark }) {
       {/* <Section id="services" title="Services">...</Section> */}
       {/* <Section id="about" title="About">...</Section> */}
       {/* <Section id="contact" title="Contact">...</Section> */}
+{/* ABOUT */}
+<Section id="about" title="About me" subtitle="">
+  <div className="prose prose-invert max-w-2xl text-sm sm:text-base">
+    {CONTENT.about?.paragraphs?.map((p, i) => (
+      <p key={i} className="opacity-90">{p}</p>
+    ))}
+  </div>
 
+  <div className="mt-6 flex flex-wrap gap-3">
+    <a
+      href={`mailto:${contact.email}?subject=Photography%20booking`}
+      className="btn btn-primary"
+    >
+      Book a session
+    </a>
+    <a
+      href={socials.instagram}
+      target="_blank"
+      rel="noreferrer"
+      className="btn btn-outline"
+    >
+      Instagram @strelnikava_ph
+    </a>
+  </div>
+</Section>
+
+{/* PACKAGES / SERVICES */}
+<Section id="services" title="Packages" subtitle="">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {(services || []).map((s, i) => (
+      <div
+        key={i}
+        className="card bg-[color:var(--surface)] border border-[color:var(--border)] p-5 rounded-2xl shadow"
+      >
+        <h3 className="text-lg font-semibold">{s.name}</h3>
+        {s.tagline && <p className="mt-1 text-sm opacity-80">{s.tagline}</p>}
+
+        {Array.isArray(s.features) && s.features.length > 0 && (
+          <ul className="mt-4 space-y-2 text-sm opacity-90 list-disc pl-5">
+            {s.features.map((f, k) => <li key={k}>{f}</li>)}
+          </ul>
+        )}
+
+        <div className="mt-5">
+          <a
+            href={`mailto:${contact.email}?subject=${encodeURIComponent(s.name)}%20booking`}
+            className="btn btn-primary w-full"
+          >
+            Book this
+          </a>
+        </div>
+      </div>
+    ))}
+  </div>
+</Section>
       <footer className="mt-16 py-10 text-center opacity-60">
         © {new Date().getFullYear()} {brand?.firstName ?? 'Angelina'} {brand?.lastName ?? 'Strelnikava'}
       </footer>
