@@ -125,23 +125,23 @@ export default function Home({ toggleDark = () => {}, dark = false }) {
         </div>
       </section>
 
-      {/* WORK */}
-      <Section id="work" title={labels.featuredTitle}>
-        <div className="mt-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {gallery.map((item, index) => (
-            <div key={item?.src || index} className="relative overflow-hidden rounded-2xl">
-              <SafeImg
-                src={item?.src}
-                alt={item?.alt}
-                focal={item?.focal}
-                eager={index < 3}
-                className="w-full h-full object-cover rounded-2xl kb-animate"
-                style={{ animationDelay: `${(index % 6) * 0.8}s` }}
-              />
-            </div>
-          ))}
-        </div>
-      </Section>
+      {/* WORK — без пустоты сверху */}
+<Section id="work" title={labels.featuredTitle} spacing="tight">
+  <div className="mt-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {gallery.map((item, index) => (
+      <div key={item?.src || index} className="relative overflow-hidden rounded-2xl">
+        <SafeImg
+          src={item?.src}
+          alt={item?.alt}
+          focal={item?.focal}
+          eager={index < 3}
+          className="w-full h-full object-cover rounded-2xl kb-animate"
+          style={{ animationDelay: `${(index % 6) * 0.8}s` }}
+        />
+      </div>
+    ))}
+  </div>
+</Section>
 
       {/* ABOUT */}
       <Section id="about" title={labels.aboutTitle} subtitle={labels.aboutSubtitle}>
