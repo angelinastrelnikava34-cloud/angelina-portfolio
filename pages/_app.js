@@ -1,6 +1,9 @@
 // pages/_app.js
-import '../styles/gallery.css';  // файл мы уже создали
-import '../styles/globals.css';  // оставь, если он у тебя есть; если нет — УДАЛИ ЭТУ СТРОКУ
+
+// Если у тебя НЕТ файла styles/globals.css — не добавляй/удали импорт ниже.
+// import '../styles/globals.css';
+
+import '../styles/gallery.css';
 
 export default function App({ Component, pageProps }) {
   return <Component {...pageProps} />;
